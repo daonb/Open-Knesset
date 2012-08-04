@@ -3,12 +3,14 @@ Here we collect the api resources. To add a new API endpoint create a tasypie
 reource in an `api.py` file under the app and than import and resiter it here
 '''
 from tastypie.api import Api
+
 from mks.api import MemberResource, PartyResource, MemberBillsResource, MemberAgendasResource
 from video.api import VideoResource
 from links.api import LinkResource
 from laws.api import BillResource, LawResource, VoteResource
 from agendas.api import AgendaResource, AgendaTodoResource
 from committees.api import CommitteeResource
+from accounts.api import UserResource
 
 v2_api = Api(api_name='v2')
 
@@ -24,3 +26,4 @@ v2_api.register(LawResource())
 v2_api.register(AgendaResource())
 v2_api.register(AgendaTodoResource())
 v2_api.register(CommitteeResource())
+v2_api.register(UserResource())
