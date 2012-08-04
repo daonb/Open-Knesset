@@ -912,6 +912,7 @@ class Command(NoArgsCommand):
             return
         try:
             if l.url.endswith('.rtf'):
+                logger.info('get_full_text url=%s' % l.url)
                 file_str = StringIO()
                 file_str.write(urllib2.urlopen(l.url).read())
                 doc = Rtf15Reader.read(file_str)
@@ -1249,7 +1250,7 @@ class Command(NoArgsCommand):
                         if p.bill:
                             p.bill.second_committee_meetings.add(cm)
                             p.bill.update_stage()
-                        logger.debug('gov proposal %s found in cm %d' % (p.title,cm.id))
+                        logger.debug('gov proposal %d found in cm %d' % (p.id,cm.id))
             for kp in kps:
                 if c.find(kp['c1'])>=0 or c.find(kp['c2'])>=0:
                     p = KnessetProposal.objects.get(pk=kp['id'])
@@ -1287,7 +1288,7 @@ class Command(NoArgsCommand):
                         p.votes.add(this_v)
                         if p.bill:
                             p.bill.update_votes()
-                        logger.debug('gov proposal %s found in vote %s' % (p.title,this_v.title))
+                        logger.debug('gov proposal %d found in vote %s' % (p.id,this_v.title))
 
             for kp in kps:
                 if v['c'].find(kp['c1'])>=0:
