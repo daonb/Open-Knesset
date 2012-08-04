@@ -1,3 +1,4 @@
+
 from django.conf.urls.defaults import *
 from piston.resource import Resource
 from django.views.decorators.cache import cache_page
@@ -6,17 +7,20 @@ from knesset.api.handlers import *
 
 from resources import v2_api
 
-vote_handler = cache_page(Resource(VoteHandler), 60*15)
-bill_handler = cache_page(Resource(BillHandler), 60*15)
-member_handler = cache_page(Resource(MemberHandler), 60*15)
-party_handler = cache_page(Resource(PartyHandler), 60*15)
-tag_handler = cache_page(Resource(TagHandler), 60*15)
-agenda_handler = cache_page(Resource(AgendaHandler), 60*15)
-committee_handler = cache_page(Resource(CommitteeHandler), 60*15)
-committee_meeting_handler = cache_page(Resource(CommitteeMeetingHandler), 60*15)
-event_handler = cache_page(Resource(EventHandler), 60*15)
+# APIv1 piston-based code
+CACHE_TIME = 60*15
+vote_handler = cache_page(Resource(VoteHandler), CACHE_TIME)
+bill_handler = cache_page(Resource(BillHandler), CACHE_TIME)
+member_handler = cache_page(Resource(MemberHandler), CACHE_TIME)
+party_handler = cache_page(Resource(PartyHandler), CACHE_TIME)
+tag_handler = cache_page(Resource(TagHandler), CACHE_TIME)
+agenda_handler = cache_page(Resource(AgendaHandler), CACHE_TIME)
+committee_handler = cache_page(Resource(CommitteeHandler), CACHE_TIME)
+committee_meeting_handler = cache_page(Resource(CommitteeMeetingHandler), CACHE_TIME)
+event_handler = cache_page(Resource(EventHandler), CACHE_TIME)
 
 urlpatterns = patterns('',
+      # APIv1 code
       url(r'^vote/$', vote_handler, name='vote-handler'),
       url(r'^vote/(?P<id>[0-9]+)/$', vote_handler, name='vote-handler'),
       url(r'^bill/$', bill_handler, name='bill-handler'),
@@ -40,6 +44,7 @@ urlpatterns = patterns('',
       # NOTE: this view is not in the api application, but in the events application
       url(r'^event/icalendar/$', 'knesset.events.views.icalendar', name='event-icalendar'),
       url(r'^event/icalendar/(?P<summary_length>\d+)/$', 'knesset.events.views.icalendar', name='event-icalendar'),
+      # APIv2 code
       (r'^', include(v2_api.urls)),
       )
 
