@@ -275,7 +275,7 @@ class SimpleTest(AgendasSetup, TestCase):
 
     def test_suggest_votes_for_existing_agenda(self):
         """
-        We expect to get only self.vote_1 returned for agenda_2
+        We expect to get only self.vote_1 and self.vote_3 returned for agenda_2
         """
         res = self.client.get('/api/v2/agenda-todo/%s/?format=json' % self.agenda_2.id)
         self.assertEqual(res.status_code, 200)
@@ -284,7 +284,8 @@ class SimpleTest(AgendasSetup, TestCase):
         def _validate_vote_list(list_key):         
             self.assertIn(list_key, todo, 'Got a todo with no votes for new agenda')
             votes = todo[list_key]
-            self.assertEquals(len(votes), 1, 'Got wrong number of "votes" for existing agenda')
+            print votes
+            self.assertEquals(len(votes), 2, 'Got wrong number of "votes" for existing agenda')
             vote = votes[0]
             self._validate_vote(vote)
             self.assertEqual(vote['id'], self.vote_1.id, "Expected vote not returned for existing agenda")
