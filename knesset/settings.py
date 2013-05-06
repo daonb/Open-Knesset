@@ -171,6 +171,7 @@ INSTALLED_APPS = (
     'plenum',
     'tinymce',
     'suggestions',
+    'topics',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -278,6 +279,9 @@ TINYMCE_DEFAULT_CONFIG = {
     'theme_advanced_toolbar_align': "center",
 
 }
+
+DEVSERVER_DEFAULT_ADDR = '127.0.0.1'
+DEVSERVER_DEFAULT_PORT = 8000
 
 # if you add a local_settings.py file, it will override settings here
 # but please, don't commit it to git.
