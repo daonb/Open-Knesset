@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date
 from django.test import TestCase
 from django.conf import settings
 from django.core.urlresolvers import reverse
@@ -8,10 +8,9 @@ from annotatetext.models import Annotation
 from actstream.models import Action
 from tagging.models import Tag, TaggedItem
 from laws.models import Bill
-from mks.models import Member
+from mks.models import Member, Knesset
 from links.models import LinkType
 from models import Committee, CommitteeMeeting
-from models import TOPIC_REJECTED
 
 just_id = lambda x: x.id
 APP = 'committees'
@@ -45,9 +44,10 @@ I have a deadline''')
 
         self.bill_1 = Bill.objects.create(stage='1', title='bill 1')
         self.mk_1 = Member.objects.create(name='mk 1')
-        self.topic = self.committee_1.topic_set.create(creator=self.jacob,
+        self.motion = self.committee_1.motions.create(creator=self.jacob,
                                                 title="hello", description="hello world")
         self.tag_1 = Tag.objects.create(name='tag1')
+        self.knesset = Knesset.objects.create(start_date=date(1970,1,1), end_date=date(2020,1,1))
 
     def testProtocolPart(self):
         parts_list = self.meeting_1.parts.list()
@@ -155,8 +155,8 @@ I have a deadline''')
         committees = res.context['committees']
         self.assertEqual(map(just_id, committees),
                          [ self.committee_1.id, self.committee_2.id, ])
-        self.assertQuerysetEqual(res.context['topics'],
-                                 ["<Topic: hello>"])
+        self.assertQuerysetEqual(res.context['motions'],
+                                 ["<Motion: hello>"])
 
     def testCommitteeMeetings(self):
         res = self.client.get(self.committee_1.get_absolute_url())
@@ -262,5 +262,4 @@ I have a deadline''')
         self.group.delete()
         self.bill_1.delete()
         self.mk_1.delete()
-        self.topic.delete()
 

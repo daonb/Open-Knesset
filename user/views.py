@@ -26,7 +26,8 @@ from mks.models import Member
 from laws.models import Bill
 from agendas.models import Agenda
 from tagvotes.models import TagVote
-from committees.models import CommitteeMeeting,Topic
+from committees.models import CommitteeMeeting
+from motions.models import Motion
 
 from forms import RegistrationForm, EditProfileForm
 
@@ -44,7 +45,7 @@ class PublicUserProfile(DetailView):
             'annotations': Annotation.objects.filter(user=user).prefetch_related('content_object').order_by('content_type', 'object_id'),
             'tagged_items': TagVote.objects.filter(user=user).order_by('tagged_item__content_type','tagged_item__object_id'),
             'agendas': [a for a in user.get_profile().agendas if a.is_public],
-            'topics': Topic.objects.get_public().filter(creator=user),
+            'motions': Motion.objects.get_public().filter(creator=user),
         })
         return context
 
@@ -138,7 +139,7 @@ FOLLOW_TYPES = {
     'meeting': CommitteeMeeting,
     'agenda': Agenda,
     'bill': Bill,
-    'topic': Topic,
+    'motion': Motion,
 }
 
 

@@ -7,7 +7,6 @@ import logging
 import tagging
 from actstream import action
 from django.conf import settings
-from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
@@ -17,22 +16,19 @@ from django.http import (HttpResponse, HttpResponseRedirect, Http404,
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.utils import simplejson as json
-from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy, ugettext as _
-from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.generic import DetailView, ListView
 from tagging.models import TaggedItem, Tag
 
 import models
-from .models import (Committee, CommitteeMeeting, Topic,
+from .models import (Committee, CommitteeMeeting,
                      COMMITTEE_PROTOCOL_PAGINATE_BY)
 from auxiliary.views import GetMoreView, BaseTagMemberListView
-from forms import EditTopicForm, LinksFormset
 from hashnav import method_decorator as hashnav_method_decorator
 from knesset.utils import clean_string
 from laws.models import Bill, PrivateProposal
-from links.models import Link
 from mks.models import Member
+from motions.models import Motion
 
 
 logger = logging.getLogger("open-knesset.committees.views")
@@ -42,27 +38,16 @@ class CommitteeListView(ListView):
     context_object_name = 'committees'
     queryset = Committee.objects.exclude(type='plenum')
     paginate_by = 20
-    INITIAL_TOPICS = 10
+    INITIAL_MOTIONS = 10
 
     def get_context_data(self, **kwargs):
         context = super(CommitteeListView, self).get_context_data(**kwargs)
-        context["topics"] = Topic.objects.summary()[:self.INITIAL_TOPICS]
-        context["topics_more"] = Topic.objects.summary().count() > self.INITIAL_TOPICS
+        context["motions"] = Motion.objects.summary()[:self.INITIAL_MOTIONS]
+        context["motions_more"] = Motion.objects.summary().count() > self.INITIAL_MOTIONS
         context['tags_cloud'] = Tag.objects.cloud_for_model(CommitteeMeeting)
-        context["INITIAL_TOPICS"] = self.INITIAL_TOPICS
+        context["INITIAL_MOTIONS"] = self.INITIAL_MOTIONS
 
         return context
-
-
-class TopicsMoreView(GetMoreView):
-    """Get partially rendered member actions content for AJAX calls to 'More'"""
-
-    paginate_by = 20
-    template_name = 'committees/_topics_summary.html'
-
-    def get_queryset(self):
-        return Topic.objects.summary()
-
 
 class CommitteeDetailView(DetailView):
 
@@ -89,7 +74,7 @@ class CommitteeDetailView(DetailView):
                       settings.LONG_CACHE_TIME)
         context.update(cached_context)
         context['annotations'] = cm.annotations.order_by('-timestamp')
-        context['topics'] = cm.topic_set.summary()[:5]
+        context['motions'] = cm.motions.summary()[:5]
         return context
 
 
@@ -183,119 +168,12 @@ class MeetingDetailView(DetailView):
 _('added-bill-to-cm')
 _('added-mk-to-cm')
 
-class TopicListView(ListView):
-    model = Topic
-    context_object_name = 'topics'
-
-    def get_queryset(self):
-        qs = Topic.objects.get_public()
-        if "committee_id" in self.kwargs:
-            qs = qs.filter(committees__id=self.kwargs["committee_id"])
-        return qs
-
-    def get_context_data(self, **kwargs):
-        context = super(TopicListView, self).get_context_data(**kwargs)
-        committee_id = self.kwargs.get("committee_id", False)
-        context["committee"] = committee_id and Committee.objects.get(pk=committee_id)
-        return context
-
-
-class TopicDetailView(DetailView):
-
-    model = Topic
-    context_object_name = 'topic'
-
-    @method_decorator(ensure_csrf_cookie)
-    def dispatch(self, *args, **kwargs):
-        return super(TopicDetailView, self).dispatch(*args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super(TopicDetailView, self).get_context_data(**kwargs)
-        topic = context['object']
-        if self.request.user.is_authenticated():
-            p = self.request.user.get_profile()
-            watched = topic in p.topics
-        else:
-            watched = False
-        context['watched_object'] = watched
-        return context
-
-@login_required
-def edit_topic(request, committee_id, topic_id=None):
-    if request.method == 'POST':
-        if topic_id:
-            t = Topic.objects.get(pk=topic_id)
-            if request.user != t.creator:
-                return HttpResponseForbidden()
-        else:
-            t = None
-        edit_form = EditTopicForm(data=request.POST, instance=t)
-        links_formset = LinksFormset(request.POST)
-        if edit_form.is_valid() and links_formset.is_valid():
-            topic = edit_form.save(commit=False)
-            if topic_id:
-                topic.id = topic_id
-            else: # new topic
-                topic.creator = request.user
-            topic.save()
-            edit_form.save_m2m()
-            links = links_formset.save(commit=False)
-            ct = ContentType.objects.get_for_model(topic)
-            for link in links:
-                link.content_type = ct
-                link.object_pk = topic.id
-                link.save()
-
-            messages.add_message(request, messages.INFO, 'Topic has been updated')
-            return HttpResponseRedirect(
-                reverse('topic-detail',args=[topic.id]))
-
-    if request.method == 'GET':
-        if topic_id: # editing existing topic
-            t = Topic.objects.get(pk=topic_id)
-            if request.user != t.creator:
-                return HttpResponseForbidden()
-            edit_form = EditTopicForm(instance=t)
-            ct = ContentType.objects.get_for_model(t)
-            links_formset = LinksFormset(queryset=Link.objects.filter(
-                content_type=ct, object_pk=t.id))
-        else: # create new topic for given committee
-            c = Committee.objects.get(pk=committee_id)
-            edit_form = EditTopicForm(initial={'committees':[c]})
-            links_formset = LinksFormset(queryset=Link.objects.none())
-    return render_to_response('committees/edit_topic.html',
-        context_instance=RequestContext(request,
-            {'edit_form': edit_form,
-             'links_formset': links_formset,
-            }))
-
-@login_required
-def delete_topic(request, pk):
-    topic = get_object_or_404(Topic, pk=pk)
-    if request.user == topic.creator or request.user.is_staff:
-        # Delete on POST
-        if request.method == 'POST':
-            topic.status = models.TOPIC_DELETED
-            topic.save()
-            return HttpResponseRedirect(reverse('committee-detail',
-                                                args=[topic.committees.all()[0].id]))
-
-        # Render a form on GET
-        else:
-            return render_to_response('committees/delete_topic.html',
-                {'topic': topic},
-                RequestContext(request)
-            )
-    else:
-        raise Http404
-
-
-class MeetingsListView(ListView):
+class MeetingListView(ListView):
 
     allow_empty = False
 
     def get_context_data(self, *args, **kwargs):
-        context = super(MeetingsListView, self).get_context_data(*args,
+        context = super(MeetingListView, self).get_context_data(*args,
                                                                  **kwargs)
         items = context['object_list']
         committee = items[0].committee
@@ -405,11 +283,14 @@ class MeetingTagListView(BaseTagMemberListView):
 #    return generic.list_detail.object_list(request, queryset,
 #        template_name='committees/committeemeeting_list_by_tag.html', extra_context=extra_context)
 
-def delete_topic_rating(request, object_id):
-    if request.method=='POST':
-        topic= get_object_or_404(Topic, pk=object_id)
-        topic.rating.delete(request.user, request.META['REMOTE_ADDR'])
-        return HttpResponse('Vote deleted.')
+class MotionsMoreView(GetMoreView):
+    """Get partially rendered motions content for AJAX calls to 'More'"""
+
+    paginate_by = 20
+    template_name = 'committees/_topics_summary.html'
+
+    def get_queryset(self):
+        return Topic.objects.summary()
 
 
 

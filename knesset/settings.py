@@ -171,7 +171,7 @@ INSTALLED_APPS = (
     'plenum',
     'tinymce',
     'suggestions',
-    'topics',
+    'motions',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (

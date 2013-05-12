@@ -159,7 +159,7 @@ def main(request):
     #                                             ).values_list('id',flat=True)
     #    if len(public_agenda_ids) > 0:
     #        context['agenda_id'] = random.choice(public_agenda_ids)
-    #    context['topics'] = Topic.objects.filter(status__in=PUBLIC_TOPIC_STATUS)\
+    #    context['motions'] = Motion.objects.filter(status__in=PUBLIC_MOTION_STATUS)\
     #                                     .order_by('-modified')\
     #                                     .select_related('creator')[:10]
     #    cache.set('main_page_context', context, 300) # 5 Minutes

@@ -1,0 +1,20 @@
+{% extends "site_base.html" %}
+{% load i18n %}
+{% load pagination_tags %}
+{% block extratitle %}{% trans "Motions" %}{% endblock %}
+{% block header %}
+{% endblock %}
+{% block divcontent %}
+<h1>{% trans "Suggested Motions" %}</h1>
+    {% autopaginate motions %}
+    <div class="item-list">
+    {% for m in motions %}
+        <div class="item {% cycle "alt" "normal" %}">
+            <a href="{{ m.get_absolute_url }}">{{m}}</a>
+            {% trans "by" %}: <a href="{% url 'public-profile' m.creator.id %}">{{m.creator}}</a><br>
+        </div>
+    {% endfor %}
+    </div>
+    {% paginate %}
+<br/>
+{% endblock %}

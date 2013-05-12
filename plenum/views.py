@@ -1,4 +1,4 @@
-from committees.views import MeetingsListView, CommitteeDetailView
+from committees.views import MeetingListView, CommitteeDetailView
 from committees.models import Committee, CommitteeMeeting
 
 class PlenumView(CommitteeDetailView):    
@@ -6,7 +6,7 @@ class PlenumView(CommitteeDetailView):
     def get_object(self, *args, **kwargs):
         return Committee.objects.get(type='plenum')
     
-class PlenumMeetingsListView(MeetingsListView):
+class PlenumMeetingListView(MeetingListView):
     
     def get_queryset (self):
         c_id = Committee.objects.get(type='plenum').id
@@ -16,6 +16,6 @@ class PlenumMeetingsListView(MeetingsListView):
             return CommitteeMeeting.objects.all()
         
     def get_context(self):
-        context = super(PlenumMeetingsListView, self).get_context()
+        context = super(PlenumMeetingListView, self).get_context()
         context['committee_type'] = 'plenum'
         return context

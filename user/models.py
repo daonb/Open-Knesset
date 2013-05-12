@@ -12,7 +12,8 @@ from actstream.models import Follow
 from mks.models import Party, Member, GENDER_CHOICES
 from laws.models import Bill
 from agendas.models import Agenda
-from committees.models import CommitteeMeeting,Topic
+from committees.models import CommitteeMeeting
+from motions.models import Motion
 
 
 NOTIFICATION_PERIOD_CHOICES = (
@@ -85,7 +86,7 @@ class UserProfile(models.Model):
     def topics(self):
         return map(lambda x: x.actor,
             Follow.objects.filter(user=self.user,
-                content_type=ContentType.objects.get_for_model(Topic)).prefetch_related('actor'))
+                content_type=ContentType.objects.get_for_model(Motion)).prefetch_related('actor'))
 
 
     def get_badges(self):

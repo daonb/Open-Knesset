@@ -3,7 +3,7 @@ from django.contrib.contenttypes.generic import GenericTabularInline
 from django.db.models import Q
 from django.contrib import admin
 from video.models import Video
-from models import Committee, CommitteeMeeting, Topic
+from models import Committee, CommitteeMeeting
 from links.models import Link
 
 class CommitteeRelatedVideosInline(generic.GenericTabularInline):
@@ -35,19 +35,3 @@ class CommitteeMeetingAdmin(admin.ModelAdmin):
 
 
 admin.site.register(CommitteeMeeting, CommitteeMeetingAdmin)
-
-
-class LinksTable(GenericTabularInline):
-    model = Link
-    ct_field = 'content_type'
-    ct_fk_field = 'object_pk'
-
-
-class TopicAdmin(admin.ModelAdmin):
-    ordering = ('-created', )
-    inlines = [
-        LinksTable,
-    ]
-
-
-admin.site.register(Topic, TopicAdmin)

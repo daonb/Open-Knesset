@@ -22,6 +22,7 @@ from persons.urls import personsurlpatterns
 from mks.views import get_mk_entry, mk_is_backlinkable
 from laws.models import Bill
 from polyorg.urls import polyorgurlpatterns
+from motions.urls import motionsurlpatterns
 
 from auxiliary.views import (
     main, post_annotation, post_details,
@@ -98,4 +99,4 @@ urlpatterns = patterns('',
 )
 urlpatterns += mksurlpatterns + lawsurlpatterns + committeesurlpatterns + plenumurlpatterns
 urlpatterns += staticfiles_urlpatterns() + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-urlpatterns += polyorgurlpatterns + personsurlpatterns
+urlpatterns += polyorgurlpatterns + personsurlpatterns + motionsurlpatterns
