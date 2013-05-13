@@ -1,4 +1,4 @@
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from django.test import TestCase
 from django.conf import settings
 from django.core.urlresolvers import reverse
@@ -18,6 +18,8 @@ APP = 'committees'
 class CommitteeMeetingDetailViewTest(TestCase):
 
     def setUp(self):
+        self.knesset = Knesset.objects.create(number=1,
+                            start_date=datetime.today()-timedelta(days=1))
         self.committee_1 = Committee.objects.create(name='c1')
         self.committee_2 = Committee.objects.create(name='c2')
         self.meeting_1 = self.committee_1.meetings.create(date=datetime.now(),
@@ -47,7 +49,8 @@ I have a deadline''')
         self.motion = self.committee_1.motions.create(creator=self.jacob,
                                                 title="hello", description="hello world")
         self.tag_1 = Tag.objects.create(name='tag1')
-        self.knesset = Knesset.objects.create(start_date=date(1970,1,1), end_date=date(2020,1,1))
+        # self.knesset = Knesset.objects.create(start_date=date(1970,1,1), end_date=date(2020,1,1))
+        self.meeting_1.mks_attended.add(self.mk_1)
 
     def testProtocolPart(self):
         parts_list = self.meeting_1.parts.list()
@@ -167,6 +170,16 @@ I have a deadline''')
         self.assertEqual(map(just_id, object_list),
                          [self.meeting_1.id, self.meeting_2.id, ],
                          'object_list has wrong objects: %s' % object_list)
+
+    def test_committee_meeting(self):
+        res = self.client.get(self.meeting_1.get_absolute_url())
+        self.assertEqual(res.status_code, 200)
+        self.assertTemplateUsed(res,
+                                'committees/committeemeeting_detail.html')
+        members = res.context['members']
+        self.assertEqual(map(just_id, members),
+                         [self.mk_1.id],
+                         'members has wrong objects: %s' % members)
 
     def testLoginRequired(self):
         res = self.client.post(reverse('committee-meeting',

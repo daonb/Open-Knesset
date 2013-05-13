@@ -21,7 +21,7 @@ from laws.models import Bill, get_debated_bills
 from agendas.models import Agenda
 from notify.models import LastSent
 from user.models import UserProfile
-from committees.models import Topic
+from motions.models import Motion
 
 
 class Command(NoArgsCommand):
@@ -29,7 +29,7 @@ class Command(NoArgsCommand):
 
     requires_model_validation = False
 
-    update_models = [Member, Bill, Agenda, Topic, None]
+    update_models = [Member, Bill, Agenda, Motion, None]
     from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', 'email@example.com')
     days_back = getattr(settings, 'DEFAULT_NOTIFICATION_DAYS_BACK', 10)
     lang = getattr(settings, 'LANGUAGE_CODE', 'he')

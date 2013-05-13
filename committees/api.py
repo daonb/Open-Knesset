@@ -44,7 +44,7 @@ class CommitteeMeetingResource(BaseResource):
             'committee').prefetch_related('mks_attended')
         allowed_methods = ['get']
         include_absolute_url = True
-        list_fields = ['committee', 'mks_attended', 'date', 'topics']
+        list_fields = ['committee', 'mks_attended', 'date', 'motions']
         excludes = ['protocol_text']
         limit = 500
 

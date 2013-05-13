@@ -16,7 +16,7 @@ from annotatetext.models import Annotation
 from events.models import Event
 from links.models import Link
 from plenum.create_protocol_parts import create_plenum_protocol_parts
-from mks.models import Knesset
+from mks.models import Member, Knesset
 
 COMMITTEE_PROTOCOL_PAGINATE_BY = 120
 

@@ -504,8 +504,7 @@ class CommitteeHandler(BaseHandler, HandlerExtensions):
                 for x in committee.members_by_presence() ]
 
 class CommitteeMeetingHandler(BaseHandler, HandlerExtensions):
-    # fields = ('committee__name', 'url', 'date', 'topics', 'protocol_text', 'src_url',
-    fields = (('committee', ('name', 'url')), 'url', 'date', 'topics', 'protocol_text', 'src_url',
+    fields = (('committee', ('name', 'url')), 'url', 'date', 'motions', 'protocol_text', 'src_url',
               'mks_attended',
               )
     allowed_methods = ('GET',)

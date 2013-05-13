@@ -8,35 +8,28 @@ from links.models import LinkType
 
 from models import Motion, MOTION_REJECTED
 
-class DriverModel(models.Model):
-    name = models.TextField()
-    motions = models.ManyToManyField('motions.Motion', blank=True)
-
 class MotionsTest(TestCase):
 
     def setUp(self):
-        self.django = DriverModel.objects.create(name='django')
-        self.python = DriverModel.objects.create(name='python')
         self.jacob = User.objects.create_user('jacob', 'jacob@example.com',
                                               'JKM')
         self.ofri = User.objects.create_user('ofri', 'ofri@example.com',
                                               'ofri')
         (self.group, created) = Group.objects.get_or_create(name='Valid Email')
         self.jacob.groups.add(self.group)
-        self.motion = self.django.motions.create(creator=self.jacob,
+        self.motion = Motion.objects.create(creator=self.jacob,
                                                 title="hello", description="hello world")
-        self.motion2 = self.django.motions.create(creator=self.ofri,
+        self.motion2 = Motion.objects.create(creator=self.ofri,
                                                 title="bye", description="goodbye")
         self.linktype = LinkType.objects.create(title='default')
 
-    def testBasic(self):
-        self.assertEqual(self.django.motions.get_public().count(), 2)
+    def testPublic(self):
+        self.assertEqual(Motion.objects.get_public().count(), 2)
         # reject a motion
         self.motion.set_status(MOTION_REJECTED, "just because")
-        self.assertEqual(self.django.motions.get_public().count(), 1)
         self.assertEqual(Motion.objects.get_public().count(), 1)
         self.motion2.set_status(MOTION_REJECTED, "because I feel like it")
-        self.assertEqual(self.django.motions.get_public().count(), 0)
+        self.assertEqual(Motion.objects.get_public().count(), 0)
 
     def testPermissions(self):
         self.assertTrue(self.motion.can_edit(self.jacob))
@@ -102,7 +95,6 @@ class MotionsTest(TestCase):
         res = self.client.post(reverse('add-motion'),
                                {'title':'test motion title',
                                 'description': 'test motion description',
-                                'committees':self.django.id,
                                 'form-INITIAL_FORMS':0,
                                 'form-MAX_NUM_FORMS':'',
                                 'form-TOTAL_FORMS':3})
@@ -131,8 +123,7 @@ class MotionsTest(TestCase):
                                  ["<Motion: bye>", "<Motion: hello>"])
 
     def tearDown(self):
-        self.django.delete()
-        self.python.delete()
         self.jacob.delete()
         self.group.delete()
         self.motion.delete()
+        self.motion2.delete()

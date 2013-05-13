@@ -116,8 +116,7 @@ class MeetingDetailView(DetailView):
         else:
             #get meeting members with presence calculation
             meeting_members_ids = set(m.id for m in cm.mks_attended.all())
-            context['members'] = [m for m in cm.committee.members_by_presence()
-                                  if m.id in meeting_members_ids]
+            context['members'] = cm.committee.members_by_presence(ids=meeting_members_ids)
             context['hide_member_presence'] = False
 
         return context
@@ -282,15 +281,4 @@ class MeetingTagListView(BaseTagMemberListView):
 #    extra_context['members'] = mks
 #    return generic.list_detail.object_list(request, queryset,
 #        template_name='committees/committeemeeting_list_by_tag.html', extra_context=extra_context)
-
-class MotionsMoreView(GetMoreView):
-    """Get partially rendered motions content for AJAX calls to 'More'"""
-
-    paginate_by = 20
-    template_name = 'committees/_topics_summary.html'
-
-    def get_queryset(self):
-        return Topic.objects.summary()
-
-
 
