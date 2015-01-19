@@ -34,3 +34,14 @@ class PersonTests(TestCase):
             self.assertEqual(getattr(mk, field), getattr(person, field))
 
         mk.delete()
+
+    def test_create_user(self):
+        p = Person.objects.create(email="boris@example.com")
+        u = p.create_user()
+        self.assertEqual(p.user, u)
+        self.assertEqual(u.username, 'boris')
+        u.delete()
+        u = p.create_user('bbb', '123')
+        self.assertEqual(u.username, 'bbb')
+        self.assertTrue(u.check_password('123'))
+
