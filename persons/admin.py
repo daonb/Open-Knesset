@@ -1,4 +1,5 @@
 from django.contrib import admin
+from links.admin import LinksInline
 from models import Person,PersonAlias,Title,Role
 
 class RoleInline(admin.TabularInline):
@@ -8,9 +9,7 @@ class PersonAdmin(admin.ModelAdmin):
     list_display=('name', 'mk', 'user')
     search_fields = ('name',)
     ordering = ('name',)
-    inlines = [
-        RoleInline,
-    ]
+    inlines = ( RoleInline, LinksInline )
     readonly_fields = ('calendar_sync_token',)
 
 admin.site.register(Person, PersonAdmin)

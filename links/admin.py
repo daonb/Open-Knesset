@@ -1,6 +1,7 @@
 from django.contrib import admin
 from models import Link, LinkType
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.contenttypes import generic
 
 def make_active(modeladmin, request, queryset):
     queryset.update(active=True)
@@ -9,6 +10,11 @@ make_active.short_description = "Mark selected links as active"
 def make_inactive(modeladmin, request, queryset):
     queryset.update(active=False)
 make_inactive.short_description = "Mark selected links as inactive"
+
+class LinksInline(generic.GenericTabularInline):
+    model = Link
+    ct_fk_field = 'object_pk'
+    extra = 1
 
 class LinkTypesAdmin(admin.ModelAdmin):
     pass

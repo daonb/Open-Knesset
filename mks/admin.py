@@ -6,6 +6,7 @@ from models import Member, Membership, MemberAltname
 from models import CoalitionMembership, Correlation, Party, \
     Award, AwardType
 from links.models import Link
+from links.admin import LinksInline
 from video.models import Video
 from persons.models import Person
 
@@ -13,13 +14,6 @@ from persons.models import Person
 class MembershipInline(admin.TabularInline):
     model = Membership
     extra = 1
-
-
-class MemberLinksInline(generic.GenericTabularInline):
-    model = Link
-    ct_fk_field = 'object_pk'
-    extra = 1
-
 
 class MemberAltnameInline(admin.TabularInline):
     model = MemberAltname
@@ -72,7 +66,7 @@ class MemberAdmin(admin.ModelAdmin):
                     'is_current', 'current_position')
     list_editable = ('is_current', 'current_position')
     search_fields = ['name']
-    inlines = (MembershipInline, MemberLinksInline, MemberAltnameInline, MemberPersonInline,
+    inlines = (MembershipInline, LinksInline, MemberAltnameInline, MemberPersonInline,
                MemberRelatedVideosInline)
     list_filter = ('current_party__knesset', 'gender')
 
