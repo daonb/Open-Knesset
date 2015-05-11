@@ -8104,3 +8104,20 @@ body.infinity-protocol #content-main > div > div.row > div.span3 {
   position: fixed;
   overflow: auto;
 }
+.action {
+  width: 50px;
+  height: 50px;
+  border-radius: 5px;
+  background-color: #88c425;
+}
+.action p {
+  padding: 0.2em;
+}
+.joined {
+  background-color: #bef202;
+  width: 165px;
+  height: 100px;
+}
+#recent-actions li {
+  padding: 0.2em;
+}

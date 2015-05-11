@@ -402,8 +402,7 @@ class MemberDetailView(DetailView):
             cached_context = {
                 'watched_member': watched,
                 'num_followers': num_followers,
-                'actions_more': actions.count() > self.MEMBER_INITIAL_DATA,
-                'actions': actions[:self.MEMBER_INITIAL_DATA],
+                'actions': actions,
                 'legislation_actions_more': legislation_actions.count() > self.MEMBER_INITIAL_DATA,
                 'legislation_actions': legislation_actions[:self.MEMBER_INITIAL_DATA],
                 'committee_actions_more': committee_actions_more['committee'],

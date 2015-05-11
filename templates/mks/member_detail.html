@@ -7,6 +7,7 @@
     <script src="{% static "js/ok-watch.js" %}?v=1"></script>
     <script src="{% static "js/d3.js" %}"></script>
     <script src="{% static "js/mk-pie.js" %}?v=2"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.isotope/2.2.0/isotope.pkgd.js"></script>
     <script type="text/javascript">
         $(function() {
             var MKPieChart= window.MKPieChart;
@@ -32,6 +33,13 @@
             });
 
             $('a[rel="tooltip"]').tooltip();
+            $('#recent-actions').isotope({
+              itemSelector: '.action',
+              masonry: {
+                columnWidth: 100
+              }
+            });
+
         });
     </script>
     {% video_init %}
@@ -228,17 +236,11 @@
                     <!--a class="btn btn-mini btn-question" href="#">?</a-->
                 </header>
                 <ul id="recent-actions">
-                {% for action in actions %}{% display_action action %}{% endfor %}
+                  {% for action in actions %}
+                    {% display_action action %}
+                  {% endfor %}
                 </ul>
-                <footer>
-                {% if actions_more %}
-                <button class="btn btn-mini btn-expand" data-provide="okmore"
-                    data-loading-text="{% trans "Loading" %} ..."
-                    autocomplete="off" data-target="#recent-actions" 
-                    data-url="{% url 'member-more-actions' object.pk %}"
-                    data-initial="{{INITIAL_DATA}}">{% trans "More" %} +</button>
-                {% endif %}
-                </footer>
+                <div class="clearfix"></div>
             </section>
 {% if not object.is_minister %}
             <section class="card card-list card-list-latest">
@@ -538,6 +540,10 @@
             <button class="btn" data-dismiss="modal" aria-hidden="true">{% trans "Close" %}</button>
         </div>
     </div>
+
+
+
+
 {% comment %}
     <ul class="actions">
         <li>
@@ -760,6 +766,7 @@
     <br />
     <div style="clear:both;"></div>
 {% endcomment %}
+
 {% endcache %}
 
 {% endblock %}

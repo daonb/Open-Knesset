@@ -1,5 +1,5 @@
 {% load i18n %}
-    <li>
+    <li class="action voted">
       <p class="item-action">
       {% if action.description == 'No Vote' %}
           {{  action.actor.is_female|yesno:_("Present and didn't vote (Female),Present and didn't vote (Male)") }}

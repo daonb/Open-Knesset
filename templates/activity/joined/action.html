@@ -1,9 +1,7 @@
 {% load i18n %}
-    <li>
-      <p class="item-action">
-        {{action.actor.is_female|yesno:_("JOINED (FEMALE),JOINED (MALE)")}}
-        {% trans "to bill" %}
-      </p>
+    <li class="action joined">
+      <!-- TODO: get the glyphicon to show -->
+      <span class="glyphicon glyphicon-asterisk"></span>
       <p class="item-title">
 {% with action.target.bill as bill %}
     {% if bill %}
@@ -13,6 +11,10 @@
     {% endif %}
 {% endwith %}
     </p>
-    <p class="item-context">{{ action.timestamp|timesince }}</p>
+    <p class="item-context">
+      {% blocktrans with action.timestamp|timesince as ago %}
+      {{ ago }} ago
+      {% endblocktrans %}
+    </p>
     </li>
 
