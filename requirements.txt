@@ -54,7 +54,7 @@ pyjwt
 django-sslserver
 python-hebrew-numbers==0.1.0
 git+https://github.com/turnkeylinux/octohub.git
-knesset-data==1.0.0
+knesset-data==1.1.0
 
 django-waffle==0.11
 django-import-export==0.4.2
