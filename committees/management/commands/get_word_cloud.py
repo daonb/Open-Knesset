@@ -1,6 +1,7 @@
 # encoding: utf-8
 import csv
 import sys
+import codecs
 from datetime import datetime
 from optparse import make_option
 
@@ -24,12 +25,11 @@ class Command(BaseCommand):
                     help='get cloud for a party'),
         make_option('--from-date', dest='fromdate', default='', type=str,
                     help='get data from the given date (yyyy-mm-dd)'),
-        make_option('--exclude', dest='exclude_fn', default='exclude.txt', type=str,
-                    help='the file of the list of excluded words.')
+        make_option('--stop-words', dest='stopwords_fn', default='stopwords.txt', type=str,
+                   help='the file of the list of excluded words.')
     )
+
     def handle(self, *args, **options):
-        # open the output
-        o = open(args[0], 'wb')
         # get the queryset ready
         qs = ProtocolPart.objects.all()
         if options['member_id']:
@@ -47,17 +47,24 @@ class Command(BaseCommand):
         # get the exclude==stopwords
         stopwords = STOPWORDS.copy()
         try:
-            f = open(options["exclude_fn"])
-            map(stopwords.add, f)
+            f = codecs.open(options["stopwords_fn"], encoding="utf8")
+            for l in f:
+                stopwords.add(l[:-1])
             f.close()
         except IOError:
+            import pdb; pdb.set_trace()
             pass
-        print text
 
-        wc = WordCloud(max_words=1000, stopwords=stopwords, margin=10,
+        wc = WordCloud(font_path="/usr/share/fonts/truetype/Alef/Alef-Regular.ttf",
+                       max_words=1000, stopwords=stopwords, margin=10,
                        random_state=1).generate(text)
-        # store default colored image
-        # plt.imshow(wc.recolor(color_func=grey_color_func, random_state=3))
+        nw = []
+        # reverse the words as we're RTL
+        for w in wc.words_:
+            nw.append((w[0][::-1], w[1]))
+
+        wc.fit_words(nw)
+
         wc.to_file(args[0])
         # show
         plt.imshow(wc)

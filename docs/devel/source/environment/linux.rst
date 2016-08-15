@@ -109,6 +109,24 @@ run:
     pip install --upgrade pip
     pip install -r Open-Knesset/requirements.txt
     
-And wait ...
+And wait ..
 
 Once done, proceed to :ref:`tests_develdb`.
+
+Word Clouds
+===================
+
+Generating word clouds is a complex business and not part of the standard
+enviornment. It requires matplotlib which is built on top of numpy and
+requires some system wide installation.
+To be able to generate word clouds you'll need to run the following commands:
+
+.. code-block:: sh
+
+    apt-get install libpng-dev libjpeg8-dev libfreetype6-dev
+    pip install -r wc_requirments.txt
+
+The clouds use the Alef font and if you don't have it you'll have to download
+the zip_ an expand it in /usr/share/fonts/truetype/Alef/Alef-Regular.ttf
+
+.. _zip: http://alef.hagilda.com/
