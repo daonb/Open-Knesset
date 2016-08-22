@@ -11,7 +11,7 @@ class Helptext(models.Model):
 
 class Keyword(models.Model):
     helptext = models.ForeignKey(Helptext)
-    kw_text = models.CharField(max_length=200)
+    kw_text = models.CharField(max_length=200, unique=True)
 
     def __unicode__(self):
         return self.kw_text

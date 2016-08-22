@@ -22,3 +22,4 @@ data/committee_mms_videos
 /node_modules
 notebooks/
 npm-debug.log
+*.egg-info

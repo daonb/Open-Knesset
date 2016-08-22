@@ -36,7 +36,7 @@ django-avatar==2.0
 -e git://github.com/spreeker/django-voting2.git#egg=django-voting2
 django-debug-toolbar<1.4
 nose
-django-nose
+django-nose==1.4.3
 django-devserver==0.8.0
 ipython
 django-tinymce==1.5.2
@@ -54,8 +54,7 @@ pyjwt
 django-sslserver
 python-hebrew-numbers==0.1.0
 git+https://github.com/turnkeylinux/octohub.git
-knesset-data==1.1.0
-
+knesset-data==1.2.0
 django-waffle==0.11
 django-import-export==0.4.2
 https://github.com/OriHoch/django-slack/archive/django1.6-5.2.2.zip

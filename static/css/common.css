@@ -1251,3 +1251,13 @@ display: none;
 }
 .candidate-list-agendas { width:385; }
 #id_search_page_q { background-image: none !important  }
+
+#unpublished-protocols {
+  margin: 20px;
+  margin-bottom: 0;
+}
+
+#unpublished-protocols .num-unpublished {
+  font-weight: bold;
+}
+

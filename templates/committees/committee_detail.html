@@ -121,6 +121,7 @@
             </section>
             <section class="card card-list card-list-latest">
                 <header><h2><i class="fa fa-clock-o"></i>{% trans 'Last Meetings' %}</h2></header>
+                <div id="unpublished-protocols" class="alert alert-info"><span class="num-unpublished">{{ protocol_not_yet_published_list|length }}</span> {% trans 'Unpublished Protocols' %}</div>
                 <ul>
                     {% for o in meetings_list|dictsortreversed:"date" %}
                         {% include "committees/_meeting_li.html" with add_li=1 %}

@@ -178,10 +178,8 @@ def reverse_with_query(viewname, args=None, kwargs=None, query_kwargs=None):
 
 def send_chat_notification(file, text, data):
     from django_slack import slack_message
+    text = ("{text}\n{data}\n-- {file}").format(file=file, text=text, data=data)
     if getattr(settings, 'SLACK_BACKEND', None) in (None, 'django_slack.backends.DisabledBackend'):
-        text = ("{text}\n"
-                "{data}\n"
-                "-- {file}").format(file=file, text=text, data=data)
         print "-- SLACK MESSAGE"
         print text
         print "----"
