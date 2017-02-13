@@ -64,3 +64,4 @@ subprocess32==3.2.7
 
 -e 'git://github.com/hasadna/knesset-data-python.git@66fed0b5b58830269d5f67e837fe29561182146e#egg=knesset-data'
 -e 'git://github.com/hasadna/knesset-data-django.git@9a81c395a020068744d3abc97fb918ba9ac48bc2#egg=knesset-data-django'
+Markdown==2.6.8
